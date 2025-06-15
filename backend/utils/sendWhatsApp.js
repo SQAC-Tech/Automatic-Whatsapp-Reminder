@@ -1,12 +1,14 @@
-const twilio = require('twilio');
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
-const sendWhatsApp = (to, message) => {
-  return client.messages.create({
-    from: process.env.TWILIO_WHATSAPP_NUMBER,
-    to: `whatsapp:${to}`,
-    body: message
-  });
+const sendWhatsApp = async (to, message) => {
+  try {
+    const res = await client.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: `whatsapp:${to}`,
+      body: message
+    });
+    console.log('✅ WhatsApp sent:', res.sid);
+    return res;
+  } catch (error) {
+    console.error('❌ WhatsApp send error:', error.message);
+    throw error;
+  }
 };
-
-module.exports = sendWhatsApp;
