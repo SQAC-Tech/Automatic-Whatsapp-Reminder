@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const axios = require('axios');
 require('dotenv').config();
 
 const reminderRoutes = require('./routes/reminderRoutes');
@@ -22,7 +23,12 @@ app.use(express.json());
 app.use('/api/reminders', reminderRoutes);
 app.use('/api', authRoutes); 
 
+// ✅ Dummy route to keep server awake
+app.get('/ping', (req, res) => {
+  res.status(200).json({ message: '✅ Server is awake!' });
+});
 
+// ✅ WhatsApp test route (optional)
 app.get('/test-whatsapp', async (req, res) => {
   try {
     const phone = req.query.phone || '+919876543210';
@@ -33,10 +39,10 @@ app.get('/test-whatsapp', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 app.post('/api/logout', (req, res) => {
   res.clearCookie('access_token').json({ message: 'Logged out' });
 });
-
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -46,13 +52,25 @@ if (!MONGO_URI) {
   process.exit(1);
 }
 
-// ✅ Important: move scheduler inside app.listen
+// ✅ Start server and scheduler
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      startScheduler(); // ✅ Start scheduler only after server is listening
+
+      startScheduler(); // ✅ Start cron after server is ready
+
+      // 🔁 Self-ping every 10 minutes to prevent Render from sleeping
+      setInterval(() => {
+        axios.get('https://automatic-whatsapp-reminder.onrender.com/ping')
+          .then(res => {
+            console.log('🔁 Self-ping:', res.data.message);
+          })
+          .catch(err => {
+            console.error('❌ Self-ping failed:', err.message);
+          });
+      }, 10 * 60 * 1000); // 10 minutes
     });
   })
   .catch((err) => {
