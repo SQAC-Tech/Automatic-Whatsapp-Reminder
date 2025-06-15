@@ -10,7 +10,9 @@ const sendWhatsApp = require('./utils/sendWhatsApp'); // for testing
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'https://automatic-whatsapp-reminder.vercel.app/',
+}));
 app.use(express.json());
 
 // API routes
