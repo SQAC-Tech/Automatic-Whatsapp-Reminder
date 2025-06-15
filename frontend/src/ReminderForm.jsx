@@ -19,18 +19,9 @@ const ReminderForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const localDate = new Date(formData.sendDate);
-    const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-
-    const payload = {
-      ...formData,
-      sendDate: utcDate.toISOString(), // convert before sending
-    };
-
     try {
-      await axios.post(`${API_BASE_URL}/api/reminders`, payload);
+      await axios.post(`${API_BASE_URL}/api/reminders`, formData);
       alert('✅ Reminder Scheduled!');
-      console.log("🔗 API Base URL:", API_BASE_URL);
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
       alert('❌ Error scheduling reminder');

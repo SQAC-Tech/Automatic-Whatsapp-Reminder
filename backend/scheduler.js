@@ -1,14 +1,17 @@
 const cron = require('node-cron');
+const moment = require('moment-timezone');
 const Reminder = require('./models/Reminder');
 const sendWhatsApp = require('./utils/sendWhatsApp');
 
 const startScheduler = () => {
-  cron.schedule('* * * * *', async () => {
-    const now = new Date();
-    console.log(`⏰ Cron running at ${now.toISOString()}`);
+  cron.schedule('*/30 * * * * *', async () => {
+    const nowIST = moment().tz('Asia/Kolkata').format('YYYY-MM-DDTHH:mm');
+    console.log(`⏰ Cron running at IST ${nowIST}`);
+
+    const currentDate = moment.tz(nowIST, 'Asia/Kolkata').toDate();
 
     const reminders = await Reminder.find({
-      sendDate: { $lte: now },
+      sendDate: { $lte: currentDate },
       sent: false
     });
 
