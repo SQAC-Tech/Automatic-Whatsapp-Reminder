@@ -20,6 +20,7 @@ const ReminderForm = () => {
     try {
       await axios.post(`${API_BASE_URL}/api/reminders`, formData);
       alert('✅ Reminder Scheduled!');
+      console.log("🔗 Using API Base URL:", API_BASE_URL);
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
       alert('❌ Error scheduling reminder');
