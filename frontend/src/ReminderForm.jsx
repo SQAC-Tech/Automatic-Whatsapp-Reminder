@@ -20,7 +20,10 @@ const ReminderForm = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${API_BASE_URL}/api/reminders`, formData);
+      await axios.post(`${API_BASE_URL}/api/reminders`, {
+        ...formData,
+        sendDate: new Date(formData.sendDate)  // Save as JS Date object
+      });
       alert('✅ Reminder Scheduled!');
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
