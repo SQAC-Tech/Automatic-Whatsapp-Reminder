@@ -9,7 +9,7 @@ const ReminderForm = () => {
     sendDate: ''
   });
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL; // ✅ Load from .env
+  const API_BASE_URL = import.meta.env.API_URL; // ✅ Load from .env
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
