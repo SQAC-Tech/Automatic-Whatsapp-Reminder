@@ -9,24 +9,29 @@ const ReminderForm = () => {
     sendDate: ''
   });
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL; // ✅ Load from .env
+
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/reminders', formData);
+      await axios.post(`${API_BASE_URL}/api/reminders`, formData);
       alert('✅ Reminder Scheduled!');
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
       alert('❌ Error scheduling reminder');
+      console.error(err); // Optional: for debugging
     }
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-md mt-10">
-      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">📅 Schedule WhatsApp Reminder</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+        📅 Schedule WhatsApp Reminder
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="name"
