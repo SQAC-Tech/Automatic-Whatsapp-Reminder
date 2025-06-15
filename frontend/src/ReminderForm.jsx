@@ -12,7 +12,18 @@ const ReminderForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_URL; // ✅ Load from .env
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "sendDate") {
+      const localDate = new Date(value);
+      const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+      setFormData({ ...formData, [name]: utcDate.toISOString() });
+
+      console.log("🕒 Local:", value);
+      console.log("🌐 UTC Converted:", utcDate.toISOString());
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
