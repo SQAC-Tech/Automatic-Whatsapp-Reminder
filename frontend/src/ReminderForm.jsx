@@ -9,33 +9,32 @@ const ReminderForm = () => {
     sendDate: ''
   });
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL; // ✅ Load from .env
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "sendDate") {
-      const localDate = new Date(value);
-      const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-      setFormData({ ...formData, [name]: utcDate.toISOString() });
-
-      console.log("🕒 Local:", value);
-      console.log("🌐 UTC Converted:", utcDate.toISOString());
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const localDate = new Date(formData.sendDate);
+    const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+
+    const payload = {
+      ...formData,
+      sendDate: utcDate.toISOString(), // convert before sending
+    };
+
     try {
-      await axios.post(`${API_BASE_URL}/api/reminders`, formData);
+      await axios.post(`${API_BASE_URL}/api/reminders`, payload);
       alert('✅ Reminder Scheduled!');
-      console.log("🔗 Using API Base URL:", API_BASE_URL);
+      console.log("🔗 API Base URL:", API_BASE_URL);
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
       alert('❌ Error scheduling reminder');
-      console.error(err); // Optional: for debugging
+      console.error(err);
     }
   };
 
