@@ -22,13 +22,9 @@ app.use(express.json());
 
 app.use('/api/reminders', reminderRoutes);
 app.use('/api', authRoutes); 
-
-// ✅ Dummy route to keep server awake
 app.get('/ping', (req, res) => {
   res.status(200).json({ message: '✅ Server is awake!' });
 });
-
-// ✅ WhatsApp test route (optional)
 app.get('/test-whatsapp', async (req, res) => {
   try {
     const phone = req.query.phone || '+919876543210';
@@ -51,8 +47,6 @@ if (!MONGO_URI) {
   console.error('❌ MONGO_URI not found in .env');
   process.exit(1);
 }
-
-// ✅ Start server and scheduler
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');

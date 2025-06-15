@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   res.json(reminders);
 });
 
-// Delete Reminder
+// Delete 
 router.delete('/:id', async (req, res) => {
   await Reminder.findByIdAndDelete(req.params.id);
   res.json({ success: true });

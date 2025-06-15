@@ -30,10 +30,10 @@ const ReminderForm = () => {
           withCredentials: true,
         }
       );
-      alert('✅ Reminder Scheduled!');
+      alert('Reminder Scheduled!');
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
-      alert('❌ Error scheduling reminder');
+      alert('Error scheduling reminder');
       console.error(err);
     }
   };
@@ -46,9 +46,9 @@ const ReminderForm = () => {
         { withCredentials: true }
       );
       alert('🚪 Logged out successfully');
-      window.location.reload(); // or redirect to login
+      window.location.reload(); 
     } catch (err) {
-      alert('❌ Logout failed');
+      alert('Logout failed');
       console.error(err);
     }
   };

@@ -11,13 +11,12 @@ const startScheduler = () => {
     const windowEnd = nowIST.clone().add(30, 'seconds');
     const next5Min = nowIST.clone().add(5, 'minutes');
 
-    console.log(`\n⏰ Cron running at IST ${nowIST.format('YYYY-MM-DD HH:mm:ss')}`);
+    console.log(`\nCron running at IST ${nowIST.format('YYYY-MM-DD HH:mm:ss')}`);
 
     // 1. Count total reminders
     const totalReminders = await Reminder.countDocuments();
-    console.log(`📦 Total reminders in DB: ${totalReminders}`);
+    console.log(`Total reminders in DB: ${totalReminders}`);
 
-    // 2. Log upcoming reminders in next 5 mins
     const upcoming = await Reminder.find({
       sent: false
     });
@@ -30,10 +29,10 @@ const startScheduler = () => {
       console.log(`🔮 Reminders to be sent in next 5 minutes:`);
       upcomingFiltered.forEach(r => {
         const timeIST = moment(r.sendDate).tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
-        console.log(`📌 ${r.name} -> ${r.phoneNumber} at ${timeIST}`);
+        console.log(`${r.name} -> ${r.phoneNumber} at ${timeIST}`);
       });
     } else {
-      console.log(`⏳ No reminders scheduled for next 5 minutes`);
+      console.log(`No reminders scheduled for next 5 minutes`);
     }
 
     // 3. Send reminders due now
@@ -43,16 +42,16 @@ const startScheduler = () => {
       return reminderTimeIST.isBetween(windowStart, windowEnd);
     });
 
-    console.log(`🚀 Sending ${dueReminders.length} reminders due now...`);
+    console.log(`Sending ${dueReminders.length} reminders due now...`);
 
     for (let reminder of dueReminders) {
       try {
         await sendWhatsApp(reminder.phoneNumber, reminder.message);
         reminder.sent = true;
         await reminder.save();
-        console.log(`✅ Sent WhatsApp to ${reminder.phoneNumber}`);
+        console.log(`Sent WhatsApp to ${reminder.phoneNumber}`);
       } catch (err) {
-        console.error('❌ Error sending WhatsApp message:', err.message);
+        console.error('Error sending WhatsApp message:', err.message);
       }
     }
   });

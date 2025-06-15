@@ -1,10 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { errorHandler } = require('../utils/error'); // optional
+const { errorHandler } = require('../utils/error'); 
 
 const router = express.Router();
-
-// Load fixed credentials from environment variables
 const FIXED_USERNAME = process.env.ADMIN_USERNAME;
 const FIXED_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -19,7 +17,6 @@ router.post('/login', (req, res, next) => {
     return next(errorHandler(401, 'Invalid credentials'));
   }
 
-  // Generate JWT token
   const token = jwt.sign({ username }, process.env.JWT_SECRET || 'devsecret', {
     expiresIn: '1h',
   });

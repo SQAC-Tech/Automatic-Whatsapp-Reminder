@@ -12,7 +12,7 @@ const Login = ({ onLoginSuccess }) => {
 
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/api/login`, // 🔁 Adjust if deployed
+        `${API_BASE_URL}/api/login`, 
         { username, password },
         { withCredentials: true }
       );

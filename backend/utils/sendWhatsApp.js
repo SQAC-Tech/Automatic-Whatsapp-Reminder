@@ -8,15 +8,15 @@ const sendWhatsApp = async (to, message) => {
       to: `whatsapp:${to}`,
       body: message
     });
-    console.log('✅ WhatsApp sent successfully. SID:', res.sid);
-    console.log('📞 To:', to);
-    console.log('📨 Message:', message);
+    console.log(' WhatsApp sent successfully. SID:', res.sid);
+    console.log(' To:', to);
+    console.log(' Message:', message);
     return res;
   } catch (error) {
-    console.error('❌ Error sending WhatsApp message');
-    console.error('👉 To:', to);
-    console.error('👉 Message:', message);
-    console.error('❌ Error Details:', error.message);
+    console.error(' Error sending WhatsApp message');
+    console.error(' To:', to);
+    console.error(' Message:', message);
+    console.error(' Error Details:', error.message);
     throw error;
   }
 };
