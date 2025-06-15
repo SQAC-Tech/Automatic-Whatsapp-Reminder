@@ -4,28 +4,39 @@ const Reminder = require('./models/Reminder');
 const sendWhatsApp = require('./utils/sendWhatsApp');
 
 const startScheduler = () => {
+  // Schedule job to run every 30 seconds
   cron.schedule('*/30 * * * * *', async () => {
-    const nowIST = moment().tz('Asia/Kolkata').format('YYYY-MM-DDTHH:mm');
-    console.log(`⏰ Cron running at IST ${nowIST}`);
+    const nowIST = moment().tz('Asia/Kolkata');
+    const thirtySecondsAgo = nowIST.clone().subtract(30, 'seconds');
 
-    const currentDate = moment.tz(nowIST, 'Asia/Kolkata').toDate();
+    console.log(`⏰ Cron running at IST ${nowIST.format('YYYY-MM-DD HH:mm:ss')}`);
 
-    const reminders = await Reminder.find({
-      sendDate: { $lte: currentDate },
-      sent: false
-    });
+    try {
+      const totalReminders = await Reminder.find();
+      console.log(`📦 Total reminders in DB: ${totalReminders.length}`);
 
-    console.log(`🔍 Found ${reminders.length} unsent reminders`);
+      const reminders = await Reminder.find({
+        sendDate: {
+          $gte: thirtySecondsAgo.toDate(),
+          $lte: nowIST.toDate(),
+        },
+        sent: false
+      });
 
-    for (let reminder of reminders) {
-      try {
-        await sendWhatsApp(reminder.phoneNumber, reminder.message);
-        reminder.sent = true;
-        await reminder.save();
-        console.log(`✅ Sent WhatsApp to ${reminder.phoneNumber}`);
-      } catch (err) {
-        console.error('❌ Error sending WhatsApp message:', err.message);
+      console.log(`🔍 Found ${reminders.length} unsent reminders in time window`);
+
+      for (let reminder of reminders) {
+        try {
+          await sendWhatsApp(reminder.phoneNumber, reminder.message);
+          reminder.sent = true;
+          await reminder.save();
+          console.log(`✅ Sent WhatsApp to ${reminder.phoneNumber} (${reminder.name})`);
+        } catch (err) {
+          console.error('❌ Error sending WhatsApp message:', err.message);
+        }
       }
+    } catch (error) {
+      console.error('❌ Scheduler error:', error.message);
     }
   });
 };
