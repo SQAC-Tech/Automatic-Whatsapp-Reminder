@@ -6,17 +6,23 @@ require('dotenv').config();
 const reminderRoutes = require('./routes/reminderRoutes');
 const startScheduler = require('./scheduler');
 const sendWhatsApp = require('./utils/sendWhatsApp'); // for testing
+const authRoutes = require('./routes/auth.route');
 
 const app = express();
 
 app.use(cors({
-  origin: 'https://automatic-whatsapp-reminder.vercel.app', // ✅ No trailing slash
+  origin: [
+    'https://automatic-whatsapp-reminder.vercel.app',
+    'http://localhost:5173'
+  ],
+  credentials: true,
 }));
 app.use(express.json());
 
 app.use('/api/reminders', reminderRoutes);
+app.use('/api', authRoutes); 
 
-// ✅ Optional: test route
+
 app.get('/test-whatsapp', async (req, res) => {
   try {
     const phone = req.query.phone || '+919876543210';
@@ -27,6 +33,10 @@ app.get('/test-whatsapp', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('access_token').json({ message: 'Logged out' });
+});
+
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

@@ -20,10 +20,16 @@ const ReminderForm = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${API_BASE_URL}/api/reminders`, {
-        ...formData,
-        sendDate: new Date(formData.sendDate)  // Save as JS Date object
-      });
+      await axios.post(
+        `${API_BASE_URL}/api/reminders`,
+        {
+          ...formData,
+          sendDate: new Date(formData.sendDate),
+        },
+        {
+          withCredentials: true,
+        }
+      );
       alert('✅ Reminder Scheduled!');
       setFormData({ name: '', phoneNumber: '', message: '', sendDate: '' });
     } catch (err) {
@@ -32,11 +38,35 @@ const ReminderForm = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/logout`,
+        {},
+        { withCredentials: true }
+      );
+      alert('🚪 Logged out successfully');
+      window.location.reload(); // or redirect to login
+    } catch (err) {
+      alert('❌ Logout failed');
+      console.error(err);
+    }
+  };
+
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-md mt-10">
-      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-        📅 Schedule WhatsApp Reminder
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+          📅 Schedule WhatsApp Reminder
+        </h2>
+        <button
+          onClick={handleLogout}
+          className="text-red-500 font-semibold hover:underline"
+        >
+          Logout
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="name"
